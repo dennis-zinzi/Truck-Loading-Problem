@@ -6,6 +6,7 @@ public class TestTLP {
 		TLP tlp = new TLP();
 		int boxNumber = 100;
 		tlp.makeBoxes(boxNumber);
-		tlp.nftlp();
+		//tlp.nftlp();
+		tlp.bftlp();
 	}
 }

@@ -10,10 +10,7 @@ public class Pile {
 	private List<Box> boxes;
 
 	public Pile(){
-		//currentWidth = b.getWidth();
-		//currentHeight+=b.getHeight();
 		boxes = new LinkedList<Box>();
-		//boxes.add(b);		
 	}
 
 	public void addBox(Box b){

@@ -1,21 +1,22 @@
 package uk.ac.ncl.csc2023.b3030113.assignment2;
 
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 import java.util.Random;
 
 public class TLP {
 
 	private Box[] boxes;
-	private List<Truck> trucks = new ArrayList<Truck>();
+	private List<Truck> trucks;
+	private int piles;
 
-	private final static int TRUCK_HEIGHT = 400;
-	private final static int TRUCK_WIDTH = 500;
 
 	private final static int MIN_BOX_SIZE = 1;
 
 	public TLP(){
+		trucks = new LinkedList<Truck>();
 		trucks.add(new Truck());
+		piles = 0;
 	}
 
 	/**
@@ -26,8 +27,8 @@ public class TLP {
 		boxes = new Box[numberOfBoxes];
 		for(int i=0;i<numberOfBoxes;i++){
 			Random rand = new Random();
-			int width = rand.nextInt((TRUCK_WIDTH - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
-			int height = rand.nextInt((TRUCK_HEIGHT - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
+			int width = rand.nextInt((Truck.TRUCK_WIDTH - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
+			int height = rand.nextInt((Truck.TRUCK_HEIGHT - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
 			boxes[i] = new Box(width,height);
 			System.out.println("Box "+i+" has W: "+boxes[i].getWidth()+" and H: "+boxes[i].getHeight());
 		}
@@ -46,6 +47,7 @@ public class TLP {
 		}
 		//See how many trucks used
 		System.out.println("Trucks used: "+trucks.size());
+		System.out.println("Piles used: "+piles);
 	}
 
 
@@ -78,12 +80,13 @@ public class TLP {
 				//Create new pile
 				Pile p2 = new Pile();
 				//Check if new pile with box fits in truck
-				if(t.getCurrentWidth()+b.getWidth()<=TRUCK_WIDTH && b.getHeight()<=Truck.TRUCK_HEIGHT){
+				if(t.getCurrentWidth()+b.getWidth()<=Truck.TRUCK_WIDTH && b.getHeight()<=Truck.TRUCK_HEIGHT){
 					System.out.println("Add box in new pile in truck");
-					//Add new pile to truck
-					t.addPile(p2);
 					//Add box to new pile
 					p2.addBox(b);
+					//Add new pile to truck
+					t.addPile(p2);
+					piles++;
 					t.increaseBoxNumber();
 					t.setCurrentWidth(p2.getCurrentWidth());
 				}
@@ -94,10 +97,11 @@ public class TLP {
 					Truck t2 = new Truck();
 					//Add truck to list
 					trucks.add(t2);
-					//Add pile in new truck
-					t2.addPile(p2);
 					//Add box to new pile
 					p2.addBox(b);
+					//Add pile in new truck
+					t2.addPile(p2);
+					piles++;
 					//Increase number of boxes in truck
 					t2.increaseBoxNumber();
 					//Update current width used in truck
@@ -113,11 +117,13 @@ public class TLP {
 			trucks.add(t2);
 			//Make new pile
 			Pile p2 = new Pile();
-			//Add pile to new truck
-			t2.addPile(p2);
 			//Add box to pile
 			p2.addBox(b);
+			//Add pile to new truck
+			t2.addPile(p2);
+			piles++;
 			t2.increaseBoxNumber();
+			t2.setCurrentWidth(p2.getCurrentWidth());
 		}
 		System.out.println("Box added");
 		System.out.println("");
@@ -125,15 +131,50 @@ public class TLP {
 
 
 	public void bftlpAddBox(Box b){
+		int minSpace = b.getWidth();
+		Pile minPile = trucks.get(0).getPile().get(0);
+		Truck minTruck = trucks.get(0);
+		boolean makePile = false;
 		
 		for(int i=0;i<trucks.size();i++){
 			if(trucks.get(i).getBoxNumber()<Truck.BOX_LIMIT){
 				for(int j=0;j<trucks.get(i).getPile().size();j++){
-
+					if(trucks.get(i).getPile().get(j).getCurrentWidth()-b.getWidth()<=minSpace){
+						minSpace = trucks.get(i).getPile().get(j).getCurrentWidth();
+						minPile = trucks.get(i).getPile().get(j);
+						makePile = false;
+					}
+				}
+				if(Truck.TRUCK_WIDTH-trucks.get(i).getCurrentWidth()<minSpace){
+					minSpace = Truck.TRUCK_WIDTH-trucks.get(i).getCurrentWidth();
+					minPile = new Pile();
+					minTruck = trucks.get(i);
+					makePile = true;
 				}
 			}
 		}
-
+		if(minSpace<=b.getWidth() && makePile==false){
+			minPile.addBox(b);
+		}
+		else if(minSpace<=b.getWidth() && makePile==true){
+			minPile.addBox(b);
+			minTruck.addPile(minPile);
+			minTruck.increaseBoxNumber();
+		}
+		else{
+			//Create new truck
+			Truck t2 = new Truck();
+			//Add truck to list
+			trucks.add(t2);
+			//Make new pile
+			Pile p2 = new Pile();
+			//Add box to pile
+			p2.addBox(b);
+			//Add pile to new truck
+			t2.addPile(p2);
+			piles++;
+			t2.increaseBoxNumber();
+		}
 
 
 	}
@@ -155,7 +196,13 @@ public class TLP {
 	 * Method to solve Truck Loading Problem via Best-Fit On-Line strategy
 	 */
 	public void bftlp(){
-
+		System.out.println("");
+		for(int i=0;i<boxes.length;i++){
+			bftlpAddBox(boxes[i]);
+		}
+		//See how many trucks used
+		System.out.println("Trucks used: "+trucks.size());
+		System.out.println("Piles used: "+piles);
 	}
 
 }
