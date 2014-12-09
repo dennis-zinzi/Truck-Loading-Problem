@@ -131,9 +131,9 @@ public class TLP {
 
 
 	public void bftlpAddBox(Box b){
-		int minSpace = b.getWidth();
-		Pile minPile = trucks.get(0).getPile().get(0);
-		Truck minTruck = trucks.get(0);
+		int minSpace = Truck.TRUCK_WIDTH;
+		int minPile = 0;
+		int minTruck = 0;
 		boolean makePile = false;
 		
 		for(int i=0;i<trucks.size();i++){
@@ -141,25 +141,28 @@ public class TLP {
 				for(int j=0;j<trucks.get(i).getPile().size();j++){
 					if(trucks.get(i).getPile().get(j).getCurrentWidth()-b.getWidth()<=minSpace){
 						minSpace = trucks.get(i).getPile().get(j).getCurrentWidth();
-						minPile = trucks.get(i).getPile().get(j);
+						minPile = j;
+						minTruck = i;
 						makePile = false;
 					}
 				}
 				if(Truck.TRUCK_WIDTH-trucks.get(i).getCurrentWidth()<minSpace){
 					minSpace = Truck.TRUCK_WIDTH-trucks.get(i).getCurrentWidth();
-					minPile = new Pile();
-					minTruck = trucks.get(i);
+					minTruck = i;
 					makePile = true;
 				}
 			}
 		}
 		if(minSpace<=b.getWidth() && makePile==false){
-			minPile.addBox(b);
+			trucks.get(minTruck).getPile().get(minPile).addBox(b);
 		}
 		else if(minSpace<=b.getWidth() && makePile==true){
-			minPile.addBox(b);
-			minTruck.addPile(minPile);
-			minTruck.increaseBoxNumber();
+			Pile p = new Pile();
+			p.addBox(b);
+			trucks.get(minTruck).addPile(p);
+			piles++;
+			trucks.get(minTruck).increaseBoxNumber();
+			trucks.get(minTruck).setCurrentWidth(p.getCurrentWidth());
 		}
 		else{
 			//Create new truck
