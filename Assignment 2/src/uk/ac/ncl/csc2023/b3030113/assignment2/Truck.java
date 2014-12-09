@@ -50,7 +50,7 @@ public class Truck {
 		return boxNumber;
 	}
 
-	public List<Pile> getPile(){
+	public List<Pile> getPiles(){
 		return piles;
 	}
 

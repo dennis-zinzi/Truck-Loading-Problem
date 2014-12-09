@@ -4,7 +4,7 @@ public class TestTLP {
 
 	public static void main(String[] args) {
 		TLP tlp = new TLP();
-		int boxNumber = 100;
+		int boxNumber = 10;
 		tlp.makeBoxes(boxNumber);
 		//tlp.nftlp();
 		tlp.bftlp();

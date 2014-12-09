@@ -43,7 +43,7 @@ public class TLP {
 	public void nftlp(){
 		System.out.println("");
 		for(int i=0;i<boxes.length;i++){
-			nftlpAddBox(boxes[i], trucks.get(trucks.size()-1).getPile().get(trucks.get(trucks.size()-1).getPile().size()-1), trucks.get(trucks.size()-1) );
+			nftlpAddBox(boxes[i], trucks.get(trucks.size()-1).getPiles().get(trucks.get(trucks.size()-1).getPiles().size()-1), trucks.get(trucks.size()-1) );
 		}
 		//See how many trucks used
 		System.out.println("Trucks used: "+trucks.size());
@@ -129,21 +129,35 @@ public class TLP {
 		System.out.println("");
 	}
 
+	/*
+	 * 
+	 * 
+	 * NEED TO CHECK IF BOX SUITABLE FOR PILE!!!!!
+	 * 
+	 * 
+	 */
 
 	public void bftlpAddBox(Box b){
 		int minSpace = Truck.TRUCK_WIDTH;
 		int minPile = 0;
 		int minTruck = 0;
 		boolean makePile = false;
-		
+
+		//Iterate through Trucks
 		for(int i=0;i<trucks.size();i++){
+			//Check if box limit not reached
 			if(trucks.get(i).getBoxNumber()<Truck.BOX_LIMIT){
-				for(int j=0;j<trucks.get(i).getPile().size();j++){
-					if(trucks.get(i).getPile().get(j).getCurrentWidth()-b.getWidth()<=minSpace){
-						minSpace = trucks.get(i).getPile().get(j).getCurrentWidth();
-						minPile = j;
-						minTruck = i;
-						makePile = false;
+				//Iterate through piles in truck i
+				for(int j=0;j<trucks.get(i).getPiles().size();j++){
+					//Check if box is suitable for Pile j
+					if(b.getWidth()<=trucks.get(i).getPiles().get(j).getCurrentWidth() && trucks.get(i).getPiles().get(j).getCurrentHeight()+b.getHeight()<=Truck.TRUCK_HEIGHT){
+						//If space unused on Pile j after box would be added is lower than previous one update minSpace details
+						if(trucks.get(i).getPiles().get(j).getCurrentWidth()-b.getWidth()<=minSpace){
+							minSpace = trucks.get(i).getPiles().get(j).getCurrentWidth()-b.getWidth();
+							minPile = j;
+							minTruck = i;
+							makePile = false;
+						}
 					}
 				}
 				if(Truck.TRUCK_WIDTH-trucks.get(i).getCurrentWidth()<minSpace){
@@ -154,9 +168,11 @@ public class TLP {
 			}
 		}
 		if(minSpace<=b.getWidth() && makePile==false){
-			trucks.get(minTruck).getPile().get(minPile).addBox(b);
+			System.out.println("Add box normally");
+			trucks.get(minTruck).getPiles().get(minPile).addBox(b);
 		}
 		else if(minSpace<=b.getWidth() && makePile==true){
+			System.out.println("New pile in truck");
 			Pile p = new Pile();
 			p.addBox(b);
 			trucks.get(minTruck).addPile(p);
@@ -165,6 +181,7 @@ public class TLP {
 			trucks.get(minTruck).setCurrentWidth(p.getCurrentWidth());
 		}
 		else{
+			System.out.println("New truck");
 			//Create new truck
 			Truck t2 = new Truck();
 			//Add truck to list
