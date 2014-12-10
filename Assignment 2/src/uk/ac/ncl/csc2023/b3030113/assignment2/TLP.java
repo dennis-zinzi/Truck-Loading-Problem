@@ -135,7 +135,6 @@ public class TLP {
 
 	
 	
-	
 	/**
 	 * Method to solve Truck Loading Problem via Best-Fit On-Line strategy
 	 */
@@ -150,6 +149,7 @@ public class TLP {
 		System.out.println("Piles used: "+piles);
 	}
 
+
 	/**
 	 * Method to add a box via the Best-Fit On-Line Truck Loading Problem Approach
 	 * @param b - Box to be added
@@ -159,10 +159,6 @@ public class TLP {
 		int minPile = 0;
 		int minTruck = 0;
 		boolean makePile = false;
-		
-	
-		
-
 		//Iterate through Trucks
 		for(int i=0;i<trucks.size();i++){
 			//Truck at current iteration in loop
