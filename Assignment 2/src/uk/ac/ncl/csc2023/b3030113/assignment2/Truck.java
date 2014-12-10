@@ -21,7 +21,6 @@ public class Truck {
 		currentWidth = 0;
 		boxNumber = 0;
 		piles = new LinkedList<Pile>();
-		addPile(new Pile());
 	}
 
 
@@ -50,7 +49,7 @@ public class Truck {
 		return boxNumber;
 	}
 
-	public List<Pile> getPile(){
+	public List<Pile> getPiles(){
 		return piles;
 	}
 
