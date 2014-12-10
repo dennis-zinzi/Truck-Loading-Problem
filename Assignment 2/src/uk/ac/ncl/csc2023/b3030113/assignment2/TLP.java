@@ -251,7 +251,6 @@ public class TLP {
 			t2.setCurrentWidth(p2.getCurrentWidth());
 			minTruck = trucks.size()-1;
 			minPile = 0;
-			
 		}
 		System.out.println("Box added in "+"truck: "+minTruck+" and pile: "+minPile);
 		System.out.println("");
