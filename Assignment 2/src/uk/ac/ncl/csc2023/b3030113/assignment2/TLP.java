@@ -170,7 +170,6 @@ public class TLP {
 		for(int i=0;i<trucks.size();i++){
 			//Truck at current iteration in loop
 			Truck t = trucks.get(i);
-//			minSpace = t.getCurrentWidth();
 
 			if(t.getPiles().isEmpty()){
 				Pile pile = new Pile();
