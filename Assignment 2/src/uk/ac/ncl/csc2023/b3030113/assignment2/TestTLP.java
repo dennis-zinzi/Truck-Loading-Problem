@@ -5,9 +5,9 @@ public class TestTLP {
 	public static void main(String[] args) {
 		TLP tlp = new TLP();
 		int boxNumber = 10;
-		//tlp.makeBoxes(boxNumber);
+		tlp.makeBoxes(boxNumber);
 		long t1 = System.nanoTime();
-		//tlp.nftlp();
+		tlp.nftlp();
 		long t2 = System.nanoTime();
 		System.out.println("Next-Fit time taken = "+(t2-t1)+"ns");
 		
@@ -17,3 +17,5 @@ public class TestTLP {
 		System.out.println("Best-Fit time taken "+"for "+boxNumber+" boxes = "+(t2-t1)+"ns");
 	}
 }
+//3376000ns
+//27923000ns

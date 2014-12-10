@@ -6,8 +6,8 @@ import java.util.Random;
 
 public class TLP {
 
-	private Box[] boxes = {new Box(467,113),new Box(315,256),new Box(484,312),new Box(140,274),
-			new Box(373,380),new Box(169,126),new Box(43,336),new Box(103,160),new Box(49,93),new Box(21,139)};
+	private Box[] boxes;/* = {new Box(467,113),new Box(315,256),new Box(484,312),new Box(140,274),
+			new Box(373,380),new Box(169,126),new Box(43,336),new Box(103,160),new Box(49,93),new Box(21,139)};*/
 	private List<Truck> trucks;
 	private int piles;
 
@@ -64,14 +64,6 @@ public class TLP {
 	public void nftlpAddBox(Box b, Pile p, Truck t){
 		//Check if number of boxes exceeded number allowed per truck
 		if(t.getBoxNumber()<Truck.BOX_LIMIT){
-
-			System.out.println("Within box number");
-
-			System.out.println("Current pile width is: "+p.getCurrentWidth());
-			System.out.println("Current height is: "+p.getCurrentHeight());
-			System.out.println("Box width is: "+b.getWidth());
-			System.out.println("Box height is: "+b.getHeight());
-
 
 			//Check box is smaller or equal to the box below and fits in truck
 			if(b.getWidth()<=p.getCurrentWidth() && p.getCurrentHeight()+b.getHeight()<=Truck.TRUCK_HEIGHT){
@@ -133,14 +125,23 @@ public class TLP {
 		System.out.println("");
 	}
 
+
 	
 	
+	
+	
+	
+	
+	
+	
+	
+
 	/**
 	 * Method to solve Truck Loading Problem via Best-Fit On-Line strategy
 	 */
 	public void bftlp(){
 		System.out.println("");
-		
+		piles = 0;
 		for(int i=0;i<boxes.length;i++){
 			bftlpAddBox(boxes[i]);
 		}
@@ -150,44 +151,49 @@ public class TLP {
 	}
 
 
+	
+	
+	
+	
 	/**
 	 * Method to add a box via the Best-Fit On-Line Truck Loading Problem Approach
 	 * @param b - Box to be added
 	 */
 	public void bftlpAddBox(Box b){
+
 		int minSpace = Truck.TRUCK_WIDTH;
 		int minPile = 0;
 		int minTruck = 0;
 		boolean makePile = false;
+
 		//Iterate through Trucks
 		for(int i=0;i<trucks.size();i++){
 			//Truck at current iteration in loop
 			Truck t = trucks.get(i);
-			
+//			minSpace = t.getCurrentWidth();
+
 			if(t.getPiles().isEmpty()){
 				Pile pile = new Pile();
 				pile.setCurrentWidth(b.getWidth());
-				t.addPile(pile);			
+				t.addPile(pile);	
+				piles++;
+				t.setCurrentWidth(pile.getCurrentWidth());
 			}
-			
+
 			//Check if box limit not reached
 			if(t.getBoxNumber()<Truck.BOX_LIMIT){
-				System.out.println("Piles: "+t.getPiles().size());
-				System.out.println("current width: "+t.getCurrentWidth());
-				
+
 				//Iterate through piles in truck i
 				for(int j=0;j<t.getPiles().size();j++){
 					//Pile at current position in Truck
 					Pile p = t.getPiles().get(j);
-					System.out.println("Pile width: "+p.getCurrentWidth());
-					
+
 					//Check if box is suitable for Pile j
 					if(b.getWidth()<=p.getCurrentWidth() && p.getCurrentHeight()+b.getHeight()<=Truck.TRUCK_HEIGHT){
 						//Check if space found is smallest one so far, and greater then zero
 						if(p.getCurrentWidth()-b.getWidth()<minSpace && p.getCurrentWidth()-b.getWidth()>=0){
 							//Set new minimal space
 							minSpace = p.getCurrentWidth()-b.getWidth();
-							System.out.println("New minSpace: "+minSpace);
 							//Set optimal pile to current one
 							minPile = j;
 							//Set optimal truck to current truck
@@ -196,31 +202,20 @@ public class TLP {
 							makePile = false;
 						}
 					}
-					System.out.println("Current minSpace: "+minSpace);
 				}
-				System.out.println("Current width in truck: "+t.getCurrentWidth());
-				
-				if(Truck.TRUCK_WIDTH-t.getCurrentWidth()<minSpace){// && Truck.TRUCK_WIDTH-t.getCurrentWidth()>=0){
-					System.out.println(Truck.TRUCK_WIDTH-t.getCurrentWidth());
+				if(Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth()<minSpace && (Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth())>=0){
 					minSpace = Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth();
-					System.out.println("NNew minSpace: "+minSpace);
 					minTruck = i;
 					makePile = true;
 				}
-				System.out.println("Truck minspace: "+minSpace);
-				System.out.println(makePile);
 			}
-			System.out.println("Final: "+minSpace);
-			System.out.println("Box size: "+b.getWidth());
-			System.out.println(minSpace<=b.getWidth());
-			System.out.println("");
 		}
 		if(minSpace<=b.getWidth() && makePile==false){
 			System.out.println("Fits in an existing pile");
 			trucks.get(minTruck).getPiles().get(minPile).addBox(b);
 			trucks.get(minTruck).increaseBoxNumber();
 		}
-		else if(minSpace<=b.getWidth() && makePile==true){
+		else if(makePile==true && trucks.get(minTruck).getCurrentWidth()+b.getWidth()<=Truck.TRUCK_WIDTH){
 			System.out.println("Needs new Pile");
 			Pile p2 = new Pile();
 			p2.addBox(b);
