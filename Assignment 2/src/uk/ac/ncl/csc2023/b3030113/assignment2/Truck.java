@@ -36,10 +36,6 @@ public class Truck {
 		return currentWidth;
 	}
 
-	public void setCurrentWidth(int currentWidth){
-		this.currentWidth += currentWidth;
-	}
-
 
 	public void increaseBoxNumber(){
 		boxNumber++;
@@ -55,6 +51,7 @@ public class Truck {
 
 	public void addPile(Pile p){
 		piles.add(p);
+		currentWidth += p.getCurrentWidth();
 	}
 
 
