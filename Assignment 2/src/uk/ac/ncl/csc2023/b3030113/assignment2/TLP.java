@@ -6,10 +6,7 @@ import java.util.Random;
 
 public class TLP {
 
-	private Box[] boxes; /*= {new Box(412,1),new Box(156,302), new Box(154,195), new Box(186,79), new Box(309,48),
-			new Box(16,4), new Box(320, 164), new Box(57, 249), new Box(71, 372), new Box(299, 43)};*/
-	  /*{new Box(467,113),new Box(315,256),new Box(484,312),new Box(140,274),
-			new Box(373,380),new Box(169,126),new Box(43,336),new Box(103,160),new Box(49,93),new Box(21,139)};*/
+	private Box[] boxes;
 	private List<Truck> trucks;
 	private int piles;
 
@@ -17,6 +14,7 @@ public class TLP {
 	private final static int MIN_BOX_SIZE = 1;
 
 	public TLP(){
+		//Initialize trucks list
 		trucks = new LinkedList<Truck>();
 		piles = 0;
 	}
@@ -26,13 +24,16 @@ public class TLP {
 	 * @param numberOfBoxes: number of boxes to be created
 	 */
 	public void makeBoxes(int numberOfBoxes){
+		//Assign size of box array
 		boxes = new Box[numberOfBoxes];
 		for(int i=0;i<numberOfBoxes;i++){
 			Random rand = new Random();
+			//Make width of box random length between 1 and Truck width
 			int width = rand.nextInt((Truck.TRUCK_WIDTH - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
+			//Make height of box random length between 1 and Truck height
 			int height = rand.nextInt((Truck.TRUCK_HEIGHT - MIN_BOX_SIZE) + 1) + MIN_BOX_SIZE;
 			boxes[i] = new Box(width,height);
-			//System.out.println("Box "+i+" has W: "+boxes[i].getWidth()+" and H: "+boxes[i].getHeight());
+			System.out.println("Box "+i+" has W: "+boxes[i].getWidth()+" and H: "+boxes[i].getHeight());
 		}
 	}
 
@@ -43,14 +44,23 @@ public class TLP {
 	 * Method to solve Truck Loading Problem via Next-Fit On-Line strategy
 	 */
 	public void nftlp(){
+		//Clear any previous truck list
 		trucks.clear();
+		//Add empty truck to list
 		trucks.add(new Truck());
 		piles = 0;
 		System.out.println("");
+		
+		//Add empty pile to empty truck in beginning of truck list  
 		Pile p = new Pile();
+		//Make pile equal to first box to be added
 		p.setCurrentWidth(boxes[0].getWidth());
+		//Add pile to truck
 		trucks.get(0).addPile(p);
+		piles++;
+		
 		for(int i=0;i<boxes.length;i++){
+			//Add boxes via NF approach
 			nftlpAddBox(boxes[i], trucks.get(trucks.size()-1).getPiles().get(trucks.get(trucks.size()-1).getPiles().size()-1), trucks.get(trucks.size()-1) );
 		}
 		//See how many trucks used
@@ -74,6 +84,7 @@ public class TLP {
 				//Box fits in pile
 				p.addBox(b);
 				t.increaseBoxNumber();
+				System.out.println("Box added at Truck: "+trucks.indexOf(t)+" Pile: "+trucks.get(trucks.indexOf(t)).getPiles().indexOf(p));
 			}
 			else{
 				//Create new pile
@@ -86,7 +97,7 @@ public class TLP {
 					t.addPile(p2);
 					piles++;
 					t.increaseBoxNumber();
-//					t.setCurrentWidth(p2.getCurrentWidth());
+					System.out.println("Box added at Truck: "+trucks.indexOf(t)+" Pile: "+trucks.get(trucks.indexOf(t)).getPiles().indexOf(p2));
 				}
 				//If new pile does not fit in truck, make a new one with said pile
 				else{
@@ -101,6 +112,7 @@ public class TLP {
 					t2.increaseBoxNumber();
 					//Add truck to list
 					trucks.add(t2);
+					System.out.println("Box added at Truck: "+trucks.indexOf(t2)+" Pile: "+trucks.get(trucks.indexOf(t2)).getPiles().indexOf(p2));
 				}
 			}
 		}
@@ -121,25 +133,29 @@ public class TLP {
 	}
 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 
 	/**
 	 * Method to solve Truck Loading Problem via Best-Fit On-Line strategy
 	 */
 	public void bftlp(){
+		//Clear any previous truck list
 		trucks.clear();
+		//Add empty truck to truck list
 		trucks.add(new Truck());
 		System.out.println("");
 		piles = 0;
+		
 		for(int i=0;i<boxes.length;i++){
+			//Add boxesvia BF approach
 			bftlpAddBox(boxes[i]);
 		}
 		//See how many trucks used
@@ -148,19 +164,23 @@ public class TLP {
 	}
 
 
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Method to add a box via the Best-Fit On-Line Truck Loading Problem Approach
 	 * @param b - Box to be added
 	 */
 	public void bftlpAddBox(Box b){
 
+		//minimum amount of space used
 		int minSpace = Truck.TRUCK_WIDTH;
+		//Pile to add box to
 		int minPile = 0;
+		//Truck to add box to
 		int minTruck = 0;
+		//Determine if need to make a new pile
 		boolean makePile = false;
 
 		//Iterate through Trucks
@@ -168,11 +188,14 @@ public class TLP {
 			//Truck at current iteration in loop
 			Truck t = trucks.get(i);
 
+			//Check if any piles in truck
+			//If truck empty add a pile with the size of the box
 			if(t.getPiles().isEmpty()){
 				Pile pile = new Pile();
 				pile.setCurrentWidth(b.getWidth());
 				t.addPile(pile);	
 				piles++;
+				//minimum space used equal to box width
 				minSpace = b.getWidth();
 			}
 
@@ -199,20 +222,29 @@ public class TLP {
 						}
 					}
 				}
+				//Check if space in truck not occupied by a pile is better for box
 				if(Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth()<minSpace && (Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth())>=0){
+					//Minimum space used equal to space unused in truck
 					minSpace = Truck.TRUCK_WIDTH-t.getCurrentWidth()-b.getWidth();
+					//Truck to add box into 
 					minTruck = i;
+					//make new pile
 					makePile = true;
 				}
 			}
 		}
+		//If box fits in an existing pile
 		if(minSpace<=trucks.get(minTruck).getCurrentWidth()-b.getWidth() && makePile==false){
 			trucks.get(minTruck).getPiles().get(minPile).addBox(b);
 			trucks.get(minTruck).increaseBoxNumber();
 		}
+		//If box's ideal position needs to create a new pile
 		else if(makePile==true && trucks.get(minTruck).getCurrentWidth()+b.getWidth()<=Truck.TRUCK_WIDTH){
+			//Make new pile
 			Pile p2 = new Pile();
+			//Add box to new pile
 			p2.addBox(b);
+			//Add pile to truck
 			trucks.get(minTruck).addPile(p2);
 			piles++;
 			trucks.get(minTruck).increaseBoxNumber();
@@ -234,17 +266,25 @@ public class TLP {
 			minTruck = trucks.size()-1;
 			minPile = 0;
 		}
+		System.out.println("Box added at Truck: "+minTruck+" Pile: "+minPile);
 	}
 
 
 
 
 
-
+	/**
+	 * Method to get Box array
+	 * @return - Box Array
+	 */
 	public Box[] getBoxes(){
 		return boxes;
 	}
 
+	/**
+	 * Method to get Truck list
+	 * @return - Truck list
+	 */
 	public List<Truck> getTrucks(){
 		return trucks;
 	}

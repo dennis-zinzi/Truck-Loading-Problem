@@ -13,8 +13,12 @@ public class Truck {
 
 	public final static int TRUCK_HEIGHT = 400;
 	public final static int TRUCK_WIDTH = 500;
+	
 	public final static int BOX_LIMIT = 25;
 
+	/**
+	 * Truck constructor
+	 */
 	public Truck(){
 		width = TRUCK_WIDTH;
 		height = TRUCK_HEIGHT;
@@ -23,34 +27,44 @@ public class Truck {
 		piles = new LinkedList<Pile>();
 	}
 
-
-	public int getWidth(){
-		return width;
-	}
-
-	public int getHeight(){
-		return height;
-	}
-
+	/**
+	 * Method to get current width used in Truck
+	 * @return - current width used
+	 */
 	public int getCurrentWidth(){
 		return currentWidth;
 	}
 
-
+	/**
+	 * Method to increase the box count in truck
+	 */
 	public void increaseBoxNumber(){
 		boxNumber++;
 	}
 
+	/**
+	 * Method to get box number in truck 
+	 * @return - box number in truck
+	 */
 	public int getBoxNumber(){
 		return boxNumber;
 	}
 
+	/**
+	 * Method to get Pile list
+	 * @return - Pile list
+	 */
 	public List<Pile> getPiles(){
 		return piles;
 	}
 
+	/**
+	 * Method to add Pile to Truck
+	 * @param p - Pile to add
+	 */
 	public void addPile(Pile p){
 		piles.add(p);
+		//Increase current width used by width of Pile p
 		currentWidth += p.getCurrentWidth();
 	}
 

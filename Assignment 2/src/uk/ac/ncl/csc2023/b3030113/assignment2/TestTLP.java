@@ -4,35 +4,29 @@ public class TestTLP {
 
 	public static void main(String[] args) {
 		TLP tlp = new TLP();
-		int boxNumber = 100000;
+		//Choose amount of boxes to make
+		int boxNumber = 100;
+		//Create boxes
 		tlp.makeBoxes(boxNumber);
+		//Print out box details
+		for(Box b: tlp.getBoxes()){
+			System.out.println("Width: "+b.getWidth()+" Height: "+b.getHeight());
+		}
+		//Get current time before next-fit applied
 		long t1 = System.nanoTime();
+		//Apply next-fit to boxes
 		tlp.nftlp();
+		//Get current time after next-fit applied
 		long t2 = System.nanoTime();
+		//Time taken by next-fit
 		System.out.println("Next-Fit time taken = "+(t2-t1)+"ns");
+		//Get current time before best-fit applied
 		t1 = System.nanoTime();
+		//Apply best-fit to boxes
 		tlp.bftlp();
+		//Get current time after best-fit applied
 		t2 = System.nanoTime();
 		System.out.println("Best-Fit time taken "+"for "+boxNumber+" boxes = "+(t2-t1)+"ns");
 	}
 }
-//For 10 boxes NF 3376000ns
-//For 10 boxes BF 27923000ns
 
-/* 
- * Trucks used: 564
- * Piles used: 774
- * Next-Fit time taken = 66312000ns
- */
-
-/*
- * Trucks used: 696
- * Piles used: 512
- * Best-Fit time taken for 1000 boxes = 328312000ns
- */
-
-/*
- * Trucks used: 61523
- * Piles used: 83647
- * Next-Fit time taken for 100000 boxes = 262094000ns
- */
